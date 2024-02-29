@@ -8,12 +8,14 @@ public class PlayerController : MonoBehaviour
     [SerializeField] Transform _footTransform;
     [SerializeField] Vector2 _groundCheck;
     [SerializeField] LayerMask _groundLayer;
-    [SerializeField] float _moveSpeed = 5f;
     [SerializeField] float _jumpStrength = 7f;
+
+    PlayerInput _playerInput;
+    FrameInput _frameInput;
     
-    Vector2 _movement;
     Rigidbody2D _rigidBody;
     Animator _animator;
+    Movement _movement;
     
 
     public void Awake() {
@@ -21,18 +23,16 @@ public class PlayerController : MonoBehaviour
 
         _rigidBody = GetComponent<Rigidbody2D>();
         _animator = GetComponent<Animator>();
+        _playerInput = GetComponent<PlayerInput>();
+        _movement = GetComponent<Movement>();
     }
 
     void Update()
     {
         GatherInput();
+        Move();
         Jump();
         HandleSpriteFlip();
-    }
-
-    void FixedUpdate() 
-    {
-        Move();
     }
 
     public bool IsFacingRight()
@@ -48,13 +48,12 @@ public class PlayerController : MonoBehaviour
 
     void GatherInput()
     {
-        float moveX = Input.GetAxis("Horizontal");
-        _movement = new Vector2(moveX * _moveSpeed, _rigidBody.velocity.y);
+        _frameInput = _playerInput.FrameInput;
     }
 
-    void Move() 
+    void Move()
     {
-        _rigidBody.velocity = _movement;
+       _movement.SetCurrentDirection(_frameInput.Move.x);
         
         if(Mathf.Abs(_rigidBody.velocity.x) < Mathf.Epsilon)
             _animator.SetBool("Running", false);
@@ -74,7 +73,9 @@ public class PlayerController : MonoBehaviour
 
     void Jump()
     {
-        if (Input.GetKeyDown(KeyCode.Space) && CheckGrounded()) 
+        if (!_frameInput.Jump) return;
+        
+        if (CheckGrounded()) 
         {
             _rigidBody.AddForce(Vector2.up * _jumpStrength, ForceMode2D.Impulse);
         }
