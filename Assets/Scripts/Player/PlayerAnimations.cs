@@ -26,7 +26,6 @@ public class PlayerAnimations : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D col)
     {
-        Debug.Log(_velocityBeforePhysicsUpdate.y);
         if (_velocityBeforePhysicsUpdate.y < _yLandVelocityCheck)
         {
             _impulseSource.GenerateImpulse();
