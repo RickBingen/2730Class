@@ -1,8 +1,15 @@
+using System;
 using UnityEngine;
 
 public class Health : MonoBehaviour
 {
+    public GameObject SplatterPrefab => _splatterPrefab;
+    public GameObject DeathVFX => _deathVFXPrefab;
+
+    public static Action<Health> OnDeath;
+    
     [SerializeField] GameObject _splatterPrefab;
+    [SerializeField] GameObject _deathVFXPrefab;
     [SerializeField] int _startingHealth = 3;
 
     int _currentHealth;
@@ -23,17 +30,8 @@ public class Health : MonoBehaviour
 
         if (_currentHealth <= 0) 
         {
-            SpawnDeathSplatterPrefab();
+            OnDeath?.Invoke(this);
             Destroy(gameObject);
         }
-    }
-
-    void SpawnDeathSplatterPrefab()
-    {
-        GameObject newSplatterPrefab = Instantiate(_splatterPrefab, transform.position, transform.rotation);
-        SpriteRenderer deathSplatterRenderer = newSplatterPrefab.GetComponent<SpriteRenderer>();
-        ColorChanger colorChanger = GetComponent<ColorChanger>();
-        Color currentColor = colorChanger.DefaultColor;
-        deathSplatterRenderer.color = currentColor;
     }
 }
