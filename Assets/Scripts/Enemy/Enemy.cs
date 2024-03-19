@@ -7,20 +7,27 @@ public class Enemy : MonoBehaviour
     [SerializeField] float _jumpInterval = 4f;
     [SerializeField] float _changeDirectionInterval = 3f;
     
-
     Rigidbody2D _rigidBody;
     Movement _movement;
+    ColorChanger _colorChanger;
 
     void Awake()
     {
         _rigidBody = GetComponent<Rigidbody2D>();
         _movement = GetComponent<Movement>();
+        _colorChanger = GetComponent<ColorChanger>();
     }
 
     void Start() 
     {
+        Init();
         StartCoroutine(ChangeDirection());
         StartCoroutine(RandomJump());
+    }
+
+    void Init()
+    {
+        _colorChanger.SetRandomColor();
     }
 
     IEnumerator ChangeDirection()
